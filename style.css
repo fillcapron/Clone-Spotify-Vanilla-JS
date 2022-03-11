@@ -3,6 +3,7 @@
 :root {
     --hover: rgb(33, 33, 33);
     --sidebar-with: 232px;
+    --button-size: 32px;
 }
 
 * {
@@ -35,6 +36,32 @@ body {
 .icon16x16 {
     height: 16px;
     width: 16px;
+}
+
+.button_player {
+    background: transparent;
+    color: #b3b3b3;
+    height: var(--button-size);
+    width: var(--button-size);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.play_button {
+    background-color: #fff;
+    border-radius: var(--button-size);
+    color: #000;
+}
+
+.play_button:hover {
+    transform: scale(1.1);
+    color: #000 !important;
+}
+
+.button_player:hover {
+    color: #fff;
 }
 
 .container {
@@ -116,7 +143,7 @@ body {
 }
 
 .header__topbar {
-    padding: 16px 32px;
+    padding: 10px 32px;
 }
 
 .main__content {
@@ -125,7 +152,6 @@ body {
 }
 
 .header__topbar_search {
-    display: flex;
     width: 364px;
     position: relative;
 }
@@ -135,7 +161,7 @@ body {
     border: 0;
     border-radius: 50px;
     padding: 6px 48px;
-    height: 30px;
+    height: 40px;
     outline: none;
 }
 
@@ -275,4 +301,87 @@ body {
     font-size: 14px;
     line-height: 1rem;
     font-weight: 400;
+}
+
+.footer {
+    background: #181818;
+    border-top: 1px solid #282828;
+    width: 100%;
+    z-index: 4;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+}
+
+.player {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+}
+
+.player_info {
+    display: flex;
+    width: 30%;
+}
+
+.player_info-img {
+    width: 56px;
+    height: 56px;
+    margin-right: 16px;
+}
+
+.player_info-album {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.player_info-album-name {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1rem;
+}
+
+.player_info-album-artist {
+    font-size: 11px;
+    font-weight: 600;
+    color: #a7a7a7;
+}
+
+.player-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.player_controls_buttons {
+    display: flex;
+    margin-bottom: 8px;
+    gap: 16px;
+}
+
+.player_controls_buttons-left {
+    display: flex;
+}
+
+.player_controls_buttons-right {
+    display: flex;
+}
+
+.player_controls_playback {
+    width: 100%;
+}
+
+.player_controls_playback-input {
+    width: 100%;
+}
+
+.player_volume {
+    display: flex;
+    justify-content: flex-end;
+    width: 30%;
 }

@@ -87,4 +87,9 @@ export class SpotifyApi {
         const res = await this.#getData(`https://api.spotify.com/v1/search?type=track,playlist&q=${query}`);
         return res.data;
     }
+
+    async  getTrack(trackId) {
+        const res = await this.#getData(`https://api.spotify.com/v1/tracks/${trackId}`);
+        return res.data;
+    }
 }
