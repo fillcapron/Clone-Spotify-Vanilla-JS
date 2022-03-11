@@ -13,9 +13,9 @@ export class Player {
 
     get track() {
         return {
-            img: this.currentTrack.album.images[0].url,
-            name: this.currentTrack.name,
-            artist: this.currentTrack.artists[0].name
+            img: this.currentTrack?.album.images[0].url,
+            name: this.currentTrack?.name,
+            artist: this.currentTrack?.artists[0].name
         };
     }
 

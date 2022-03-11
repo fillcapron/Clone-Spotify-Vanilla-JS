@@ -109,6 +109,7 @@ function updateProgressPlayer() {
             duration,
             currentTime
         } = e.target;
+
         const progressPercent = (currentTime / duration) * 100;
         progress.setAttribute('value', progressPercent);
         currentTimeTrack.textContent = formatTime(currentTime % 60);
@@ -164,15 +165,27 @@ volumeButton.addEventListener('change', (e) => {
 });
 
 nextButton.addEventListener('click', () => {
-    updateProgressPlayer();
     player.nextTrack();
-    const {img, name, artist} = player.track;
-    addTrackInfo(img, name, artist);
+    const {
+        img,
+        name,
+        artist
+    } = player.track;
+    if (img && name && artist) {
+        addTrackInfo(img, name, artist);
+        updateProgressPlayer();
+    }
 });
 
 prevButton.addEventListener('click', () => {
-    updateProgressPlayer();
     player.previousTrack();
-    const {img, name, artist} =  player.track;
-    addTrackInfo(img, name, artist);
+    const {
+        img,
+        name,
+        artist
+    } = player.track;
+    if (img && name && artist) {
+        addTrackInfo(img, name, artist);
+        updateProgressPlayer();
+    }
 });
