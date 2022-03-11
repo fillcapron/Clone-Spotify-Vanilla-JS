@@ -373,7 +373,9 @@ body {
 }
 
 .player_controls_playback {
+    display: flex;
     width: 100%;
+    gap: 10px;
 }
 
 .player_controls_playback-input {

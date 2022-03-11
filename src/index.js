@@ -3,9 +3,10 @@ import {
 } from "./api/api.js";
 import {
     Player
-} from "./player.js";
+} from "./player/player.js";
 import {
-    millisToMinutesAndSeconds
+    millisToMinutesAndSeconds,
+    formatTime
 } from './utils.js'
 
 const clientId = 'f03d452f6b3647c38ab26ad5f8cc8629';
@@ -16,7 +17,13 @@ const track = document.getElementById('track');
 const search = document.getElementById('search');
 const content = document.getElementById('content');
 
-const play = document.querySelector('.play_button');
+const playButton = document.querySelector('.play_button');
+const volumeButton = document.querySelector('.player_volume');
+const progress = document.querySelector('.player_controls_playback-input');
+const timeTrack = document.querySelector('.player_controls_playback-fullTime');
+const currentTimeTrack = document.querySelector('.player_controls_playback-currentTime');
+const nextButton = document.querySelector('.button_player.next');
+const prevButton = document.querySelector('.button_player.prev');
 
 const spotify = new SpotifyApi(clientId, secret);
 const player = new Player();
@@ -93,6 +100,22 @@ function addTrackInfo(img, name, artist) {
     player.querySelector('.player_info-img').setAttribute('src', img);
     player.querySelector('.player_info-album-name').textContent = name;
     player.querySelector('.player_info-album-artist').textContent = artist;
+    timeTrack.textContent = '00:30';
+}
+
+function updateProgressPlayer() {
+    player.audio.addEventListener('timeupdate', (e) => {
+        const {
+            duration,
+            currentTime
+        } = e.target;
+        const progressPercent = (currentTime / duration) * 100;
+        progress.setAttribute('value', progressPercent);
+        currentTimeTrack.textContent = formatTime(currentTime % 60);
+        if (duration === currentTime) {
+            playButton.innerHTML = '<svg role="img" height="16" width="16" viewBox="0 0 16 16" class="svg"><path d="M3 1.713a.7.7 0 011.05-.607l10.89 6.288a.7.7 0 010 1.212L4.05 14.894A.7.7 0 013 14.288V1.713z"></path></svg>';
+        }
+    });
 }
 
 
@@ -124,6 +147,32 @@ search.addEventListener('input', async (e) => {
     }
 });
 
-play.addEventListener('click', () => {
-    player.play();
+playButton.addEventListener('click', (e) => {
+
+    if (!player.isPlaying && player.currentTrack) {
+        e.target.innerHTML = '<svg role="img" height="16" width="16" viewBox="0 0 16 16" class="svg"><path d="M2.7 1a.7.7 0 00-.7.7v12.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V1.7a.7.7 0 00-.7-.7H2.7zm8 0a.7.7 0 00-.7.7v12.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V1.7a.7.7 0 00-.7-.7h-2.6z"></path></svg>';
+        player.play();
+        updateProgressPlayer();
+        return;
+    }
+    e.target.innerHTML = '<svg role="img" height="16" width="16" viewBox="0 0 16 16" class="svg"><path d="M3 1.713a.7.7 0 011.05-.607l10.89 6.288a.7.7 0 010 1.212L4.05 14.894A.7.7 0 013 14.288V1.713z"></path></svg>';
+    player.pause();
+}, true);
+
+volumeButton.addEventListener('change', (e) => {
+    player.volume(e.target.value);
+});
+
+nextButton.addEventListener('click', () => {
+    updateProgressPlayer();
+    player.nextTrack();
+    const {img, name, artist} = player.track;
+    addTrackInfo(img, name, artist);
+});
+
+prevButton.addEventListener('click', () => {
+    updateProgressPlayer();
+    player.previousTrack();
+    const {img, name, artist} =  player.track;
+    addTrackInfo(img, name, artist);
 });
