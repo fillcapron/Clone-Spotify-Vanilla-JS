@@ -61,25 +61,30 @@ function addTracks(el, items) {
     title.classList.add('title');
     title.textContent = 'Найденные треки';
 
-    items.forEach(async (item, i) => {
-        const tracks = document.createElement('div');
-        tracks.innerHTML = track.innerHTML;
-        tracks.classList.add('tracks_item');
-        tracks.querySelector('.tracks_item_info-play-image').setAttribute('src', item.album.images[0].url);
-        tracks.querySelector('.tracks_item_info-album-name').textContent = item.name;
-        tracks.querySelector('.tracks_item_info-album-artist').textContent = item.artists[0].name;
-        tracks.querySelector('.tracks_item-ms').textContent = millisToMinutesAndSeconds(item.duration_ms);
-        tracks.addEventListener('click', async () => {
-            player.track = item.name;
-            addTrackInfo(item.album.images[0].url, item.name, item.artists[0].name);
-        })
-        player.addTrack(await spotify.getTrack(item.id));
-        tracksElement.append(tracks);
-    });
-
     if (!items.length) {
         tracksElement.textContent = 'Ничего не найдено';
     }
+
+    items.forEach(async (item) => {
+        const tracks = document.createElement('div');
+        tracks.innerHTML = track.innerHTML;
+        tracks.classList.add('tracks_item');
+        if (item.preview_url) {
+            tracks.querySelector('.tracks_item_info-play-image').setAttribute('src', item.album.images[0].url);
+            tracks.querySelector('.tracks_item_info-album-name').textContent = item.name;
+            tracks.querySelector('.tracks_item_info-album-artist').textContent = item.artists[0].name;
+            tracks.querySelector('.tracks_item-ms').textContent = millisToMinutesAndSeconds(item.duration_ms);
+            tracks.addEventListener('click', async () => {
+                player.track = item.name;
+                addTrackInfo(item.album.images[0].url, item.name, item.artists[0].name);
+                player.play();
+                changeButton();
+                updateProgressPlayer();
+            })
+            player.addTrack(await spotify.getTrack(item.id));
+            tracksElement.append(tracks);
+        }
+    });
 
     el.append(title);
     el.append(tracksElement);
@@ -119,6 +124,16 @@ function updateProgressPlayer() {
     });
 }
 
+function changeButton() {
+    const state = player.isPlaying;
+    if (state) {
+        playButton.innerHTML = '<svg role="img" height="16" width="16" viewBox="0 0 16 16" class="svg"><path d="M2.7 1a.7.7 0 00-.7.7v12.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V1.7a.7.7 0 00-.7-.7H2.7zm8 0a.7.7 0 00-.7.7v12.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V1.7a.7.7 0 00-.7-.7h-2.6z"></path></svg>';
+
+    } else {
+        playButton.innerHTML = '<svg role="img" height="16" width="16" viewBox="0 0 16 16" class="svg"><path d="M3 1.713a.7.7 0 011.05-.607l10.89 6.288a.7.7 0 010 1.212L4.05 14.894A.7.7 0 013 14.288V1.713z"></path></svg>';
+
+    }
+}
 
 window.addEventListener('DOMContentLoaded', async () => {
 
@@ -139,7 +154,6 @@ search.addEventListener('input', async (e) => {
         content.innerHTML = '';
         addPlaylistElements(content, res.playlists.items, 'Плейлисты');
         addTracks(content, res.tracks.items);
-        player.arrTracks;
         return;
     }
     if (!query.length) {
@@ -151,17 +165,16 @@ search.addEventListener('input', async (e) => {
 playButton.addEventListener('click', (e) => {
 
     if (!player.isPlaying && player.currentTrack) {
-        e.target.innerHTML = '<svg role="img" height="16" width="16" viewBox="0 0 16 16" class="svg"><path d="M2.7 1a.7.7 0 00-.7.7v12.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V1.7a.7.7 0 00-.7-.7H2.7zm8 0a.7.7 0 00-.7.7v12.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V1.7a.7.7 0 00-.7-.7h-2.6z"></path></svg>';
         player.play();
         updateProgressPlayer();
-        return;
+    } else {
+        player.pause();
     }
-    e.target.innerHTML = '<svg role="img" height="16" width="16" viewBox="0 0 16 16" class="svg"><path d="M3 1.713a.7.7 0 011.05-.607l10.89 6.288a.7.7 0 010 1.212L4.05 14.894A.7.7 0 013 14.288V1.713z"></path></svg>';
-    player.pause();
+    changeButton();
 }, true);
 
 volumeButton.addEventListener('change', (e) => {
-    player.volume(e.target.value);
+    player.setVolume(e.target.value);
 });
 
 nextButton.addEventListener('click', () => {
@@ -173,6 +186,7 @@ nextButton.addEventListener('click', () => {
     } = player.track;
     if (img && name && artist) {
         addTrackInfo(img, name, artist);
+        changeButton();
         updateProgressPlayer();
     }
 });
@@ -186,6 +200,7 @@ prevButton.addEventListener('click', () => {
     } = player.track;
     if (img && name && artist) {
         addTrackInfo(img, name, artist);
+        changeButton();
         updateProgressPlayer();
     }
 });

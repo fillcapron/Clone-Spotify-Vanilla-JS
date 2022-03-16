@@ -273,6 +273,7 @@ body {
     right: 0;
     bottom: 0;
     top: 0;
+    width: 100%;
 }
 
 .tracks_item_info-play:hover .tracks_item_info-play-button{

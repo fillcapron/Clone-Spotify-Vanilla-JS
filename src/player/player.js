@@ -5,6 +5,7 @@ export class Player {
         this.currentTrack = null;
         this.isPlaying = false;
         this.audio = null;
+        this.volume = 0.5;
     }
 
     addTrack(track) {
@@ -34,27 +35,31 @@ export class Player {
         }
 
         this.audio = new Audio(track.preview_url);
-        this.audio.volume = 0.5;
+        this.audio.volume = this.volume;
     }
 
     play() {
-        if (!this.isPlaying && this.audio) {
-            this.audio.play();
-            this.isPlaying = true;
-        }
-    }
 
-    pause() {
         if (this.isPlaying) {
             this.audio.pause();
             this.isPlaying = false;
         }
+
+        this.audio.volume = this.volume;
+        this.audio.play();
+        this.isPlaying = true;
     }
 
-    volume(value) {
-        if (this.isPlaying) {
-            this.audio.volume = value;
-        }
+    pause() {
+        if (!this.audio) return;
+        this.audio.pause();
+        this.isPlaying = false;
+    }
+
+    setVolume(value) {
+        this.volume = value;
+        if (!this.audio) return;
+        this.audio.volume = value;
     }
 
     nextTrack() {
